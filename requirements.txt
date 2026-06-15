@@ -30,7 +30,7 @@ PyQt5==5.15.11
 PyQt5-Qt5==5.15.2
 PyQt5_sip==12.17.0
 python-dateutil==2.8.2
-pywin32==306
+
 pyzmq==25.1.2
 six==1.16.0
 stack-data==0.6.3
