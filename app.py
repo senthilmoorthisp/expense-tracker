@@ -3,7 +3,7 @@
 # New Advanced Expense Tracker
 # Learning Git
 import sqlite3
-from flask import Flask,render_template,request,redirect
+from flask import Flask,render_template,request,redirect,url_for
 app=Flask(__name__)
 conn=sqlite3.connect("expenses.db", check_same_thread=False)
 cursor=conn.cursor()
@@ -15,8 +15,39 @@ CREATE TABLE IF NOT EXISTS expenses(
  category TEXT)
 """)
 conn.commit()
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users(
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ username TEXT UNIQUE,
+ password TEXT
+ )
+ """)
+conn.commit()
+@app.route("/register")
+def register():
+     return """
+     <h2>Register</h2>
+     <form method='POST' action='/save_user'>
+     Username:<br>
+     <input type='text' name='username'><br><br>
+     Password:<br>
+     <input type='password' name='password'><br><br>
+     <button type='submit'>Register</button>
+     </form>
+     """
+@app.route("/save_user", methods=["POST"])
+def save_user():
+    username=request.form["username"]
+    password=request.form["password"]
+    cursor.execute(
+        "INSERT INTO users(username,password) VALUES(?,?)",(username,password))
+    conn.commit()
+    return "User Registered Successfully"
+
+
 @app.route("/")
 def home():
+    
     search=request.args.get("search")
     if search:
         cursor.execute("SELECT * FROM expenses WHERE title LIKE ?",('%' + search + '%',))
